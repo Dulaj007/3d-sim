@@ -1,12 +1,16 @@
 "use client";
 
 import { create } from "zustand";
+import * as THREE from "three";
+
+/* =========================
+📦 TYPES
+========================= */
 
 export type ModelItem = {
   id: string;
   url: string;
 
-  // 📍 Transform state
   position: [number, number, number];
   rotation: [number, number, number];
   scale: [number, number, number];
@@ -14,28 +18,57 @@ export type ModelItem = {
 
 type TransformMode = "translate" | "rotate" | "scale";
 
+type CameraState = {
+  position: [number, number, number];
+  rotation: [number, number, number];
+};
+
+type EnvironmentType = "preset" | "hdr" | "exr" | null;
+
+/* =========================
+🧠 STORE TYPE
+========================= */
+
 type ModelState = {
-  // 📦 models
+  /* 🎯 Active object */
+  activeObject: THREE.Object3D | null;
+  setActiveObject: (obj: THREE.Object3D | null) => void;
+
+  /* 🔄 Frame tick */
+  tick: number;
+  setTick: (t: number) => void;
+
+  /* 📦 Models */
   models: ModelItem[];
   selectedId: string | null;
 
-  // 🎛 transform mode
+  /* 🎛 Transform mode */
   mode: TransformMode;
 
-  // ⬆️ upload state
+  /* 📷 Camera */
+  camera: CameraState;
+
+  /* 🔒 Camera Lock */
+  isCameraLocked: boolean;
+  toggleCameraLock: () => void;
+
+  /* 🌍 Environment */
+  environment: string | null;
+  environmentType: EnvironmentType;
+  isEnvLoading: boolean;
+
+  setEnvironment: (env: string | null, type?: EnvironmentType) => void;
+  setEnvLoading: (v: boolean) => void;
+
+  /* ⬆️ Upload */
   isUploading: boolean;
   progress: number;
 
-  // 📦 actions
+  /* 📦 Actions */
   addModel: (url: string) => void;
   selectModel: (id: string | null) => void;
 
-  // 🔄 transform updates
-  updatePosition: (id: string, position: [number, number, number]) => void;
-  updateRotation: (id: string, rotation: [number, number, number]) => void;
-  updateScale: (id: string, scale: [number, number, number]) => void;
-
-  // 🔥 NEW: unified transform update (IMPORTANT)
+  /* 🔄 Transform */
   updateTransform: (
     id: string,
     transform: Partial<
@@ -43,27 +76,74 @@ type ModelState = {
     >
   ) => void;
 
-  // 🎛 mode actions
+  /* 🎛 Mode */
   setMode: (mode: TransformMode) => void;
 
-  // ⬆️ upload actions
+  /* 📷 Camera */
+  setCamera: (cam: CameraState) => void;
+
+  /* ⬆️ Upload */
   startUpload: () => void;
   setProgress: (p: number) => void;
 };
 
+/* =========================
+🏗 STORE
+========================= */
+
 export const useModelStore = create<ModelState>((set) => ({
-  // 📦 initial state
+  /* 🎯 ACTIVE OBJECT */
+  activeObject: null,
+  setActiveObject: (obj) => set({ activeObject: obj }),
+
+  /* 🔄 FRAME TICK */
+  tick: 0,
+  setTick: (t) => set({ tick: t }),
+
+  /* 📦 MODELS */
   models: [],
   selectedId: null,
 
-  // 🎛 default mode
+  /* 🎛 MODE */
   mode: "rotate",
 
-  // ⬆️ upload
+  /* 📷 CAMERA */
+  camera: {
+    position: [0, 0, 5],
+    rotation: [0, 0, 0],
+  },
+
+  /* 🔒 CAMERA LOCK */
+  isCameraLocked: true,
+  toggleCameraLock: () =>
+    set((state) => ({
+      isCameraLocked: !state.isCameraLocked,
+    })),
+
+  /* 🌍 ENVIRONMENT */
+  environment: "city",
+  environmentType: "preset",
+  isEnvLoading: false,
+
+  setEnvironment: (env, type = "preset") =>
+    set({
+      environment: env,
+      environmentType: env ? type : null,
+    }),
+
+  setEnvLoading: (v) =>
+    set({
+      isEnvLoading: v,
+    }),
+
+  /* ⬆️ UPLOAD */
   isUploading: false,
   progress: 0,
 
-  // ✅ add model
+  /* =========================
+  📦 ACTIONS
+  ========================= */
+
   addModel: (url) =>
     set((state) => {
       const id = crypto.randomUUID();
@@ -74,8 +154,6 @@ export const useModelStore = create<ModelState>((set) => ({
           {
             id,
             url,
-
-            // 🔥 default transforms
             position: [0, 0, 0],
             rotation: [0, 0, 0],
             scale: [1, 1, 1],
@@ -87,35 +165,15 @@ export const useModelStore = create<ModelState>((set) => ({
       };
     }),
 
-  // ✅ select model
   selectModel: (id) =>
     set({
       selectedId: id,
     }),
 
-  // 🔹 granular updates (still usable)
-  updatePosition: (id, position) =>
-    set((state) => ({
-      models: state.models.map((m) =>
-        m.id === id ? { ...m, position } : m
-      ),
-    })),
+  /* =========================
+  🔥 TRANSFORM UPDATE
+  ========================= */
 
-  updateRotation: (id, rotation) =>
-    set((state) => ({
-      models: state.models.map((m) =>
-        m.id === id ? { ...m, rotation } : m
-      ),
-    })),
-
-  updateScale: (id, scale) =>
-    set((state) => ({
-      models: state.models.map((m) =>
-        m.id === id ? { ...m, scale } : m
-      ),
-    })),
-
-  // 🔥 unified update (USED IN ModelItem)
   updateTransform: (id, transform) =>
     set((state) => ({
       models: state.models.map((m) =>
@@ -123,20 +181,34 @@ export const useModelStore = create<ModelState>((set) => ({
       ),
     })),
 
-  // 🎛 change transform mode
+  /* =========================
+  🎛 MODE
+  ========================= */
+
   setMode: (mode) =>
     set({
       mode,
     }),
 
-  // ⬆️ start upload
+  /* =========================
+  📷 CAMERA
+  ========================= */
+
+  setCamera: (cam) =>
+    set({
+      camera: cam,
+    }),
+
+  /* =========================
+  ⬆️ UPLOAD
+  ========================= */
+
   startUpload: () =>
     set({
       isUploading: true,
       progress: 0,
     }),
 
-  // ⬆️ update upload progress
   setProgress: (p) =>
     set({
       progress: p,

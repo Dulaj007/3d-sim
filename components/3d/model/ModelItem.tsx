@@ -5,7 +5,10 @@ import { TransformControls } from "@react-three/drei";
 import * as THREE from "three";
 
 import ModelLoader from "./ModelLoader";
-import { useModelStore, ModelItem as ModelItemType } from "@/store/useModelStore";
+import {
+  useModelStore,
+  ModelItem as ModelItemType,
+} from "@/store/useModelStore";
 
 type Props = {
   model: ModelItemType;
@@ -20,45 +23,71 @@ export default function ModelItem({
   orbitRef,
   onSelect,
 }: Props) {
-  const groupRef = useRef<THREE.Group>(null);
+  const modelRef = useRef<THREE.Object3D>(null);
 
+  const setActiveObject = useModelStore((s) => s.setActiveObject);
   const mode = useModelStore((s) => s.mode);
   const updateTransform = useModelStore((s) => s.updateTransform);
 
   return (
-    <TransformControls
-      enabled={isSelected}
-      mode={mode}
-      onMouseDown={() => {
-        if (orbitRef.current) orbitRef.current.enabled = false;
-      }}
-      onMouseUp={() => {
-        if (orbitRef.current) orbitRef.current.enabled = true;
+    <>
+      {/* 🔥 TransformControls */}
+      <TransformControls
+        object={modelRef.current ?? undefined}
+        enabled={isSelected}
+        mode={mode}
+  onMouseDown={() => {
+  if (orbitRef.current) orbitRef.current.enabled = false;
+}}
+onMouseUp={() => {
+  const isLocked = useModelStore.getState().isCameraLocked;
 
-        if (!groupRef.current) return;
+  if (orbitRef.current && !isLocked) {
+    orbitRef.current.enabled = true;
+  }
+}}
+        onObjectChange={() => {
+          if (!modelRef.current) return;
 
-        const obj = groupRef.current;
+          const obj = modelRef.current;
 
-        updateTransform(model.id, {
-          position: [obj.position.x, obj.position.y, obj.position.z],
-          rotation: [obj.rotation.x, obj.rotation.y, obj.rotation.z],
-          scale: [obj.scale.x, obj.scale.y, obj.scale.z],
-        });
-      }}
-    >
-      {/* 🔥 IMPORTANT: THIS is what controls attach to */}
+          // ✅ REAL-TIME correct transform sync
+          updateTransform(model.id, {
+            position: [
+              obj.position.x,
+              obj.position.y,
+              obj.position.z,
+            ],
+            rotation: [
+              obj.rotation.x,
+              obj.rotation.y,
+              obj.rotation.z,
+            ],
+            scale: [
+              obj.scale.x,
+              obj.scale.y,
+              obj.scale.z,
+            ],
+          });
+        }}
+      />
+
+      {/* 🔥 REAL MODEL */}
       <group
-        ref={groupRef}
         position={model.position}
         rotation={model.rotation}
         scale={model.scale}
         onClick={(e) => {
           e.stopPropagation();
           onSelect(model.id);
+
+          if (modelRef.current) {
+            setActiveObject(modelRef.current);
+          }
         }}
       >
-        <ModelLoader url={model.url} />
+        <ModelLoader url={model.url} modelRef={modelRef} />
       </group>
-    </TransformControls>
+    </>
   );
 }

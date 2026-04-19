@@ -4,6 +4,7 @@ import Scene from "@/components/3d/Scene/Scene";
 import Navigation from "@/components/layout/Navigation";
 import HUD from "@/components/overlays/HUD";
 import { useModelStore } from "@/store/useModelStore";
+import CoordinatesPanel from "@/components/panels/CoordinatesPanel/CoordinatesPanel";
 
 export default function HomePage() {
   const models = useModelStore((state) => state.models);
@@ -15,7 +16,7 @@ export default function HomePage() {
       <div className="absolute inset-0 z-0">
         <Scene />
       </div>
-
+<CoordinatesPanel />
       {/* 🧭 Top Navigation */}
       <div className="absolute top-0 left-0 w-full z-20">
         <Navigation />
