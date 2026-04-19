@@ -17,18 +17,15 @@ const ModelWrapper = forwardRef(function ModelWrapper(
 
     box.getSize(size);
 
-    // ❌ REMOVE center shifting
-    // innerRef.current.position.sub(center);
-
-    // ✅ ONLY normalize scale
     const maxDim = Math.max(size.x, size.y, size.z);
     const scale = 2 / maxDim;
     innerRef.current.scale.setScalar(scale);
   }, [scene]);
 
   return (
-    <group ref={ref}>
-      <primitive ref={innerRef} object={scene} />
+    <group>
+      {/* 🔥 THIS is the REAL object */}
+      <primitive ref={ref} object={scene} />
     </group>
   );
 });
