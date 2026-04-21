@@ -7,6 +7,12 @@ import * as THREE from "three";
 📦 TYPES
 ========================= */
 
+/**
+ * SavePoint
+ *
+ * Represents a snapshot of a model’s transform
+ * along with the camera state at that moment.
+ */
 export type SavePoint = {
   id: string;
   name: string;
@@ -21,6 +27,11 @@ export type SavePoint = {
   };
 };
 
+/**
+ * ModelItem
+ *
+ * Represents a single 3D model instance in the scene.
+ */
 export type ModelItem = {
   id: string;
   name: string; 
@@ -34,19 +45,37 @@ export type ModelItem = {
   savePoints: SavePoint[];
 };
 
+/**
+ * Transform modes used by TransformControls.
+ */
 type TransformMode = "translate" | "rotate" | "scale";
 
+/**
+ * Camera state representation stored globally.
+ */
 type CameraState = {
   position: [number, number, number];
   rotation: [number, number, number];
 };
 
+/**
+ * Environment types supported by the system.
+ */
 type EnvironmentType = "preset" | "hdr" | "exr" | null;
 
 /* =========================
 🧠 STORE TYPE
 ========================= */
 
+/**
+ * ModelState
+ *
+ * Defines the full shape of the global store.
+ * Includes:
+ * - UI state
+ * - Scene state
+ * - Actions
+ */
 type ModelState = {
   // 🪟 PANEL STATES
   isObjectsOpen: boolean;
@@ -54,22 +83,44 @@ type ModelState = {
   isInspectorOpen: boolean;
   setIsInspectorOpen: (isOpen: boolean) => void;
 
+  /**
+   * Reference to the currently active Three.js object.
+   * Used for real-time transform syncing.
+   */
   activeObject: THREE.Object3D | null;
   setActiveObject: (obj: THREE.Object3D | null) => void;
 
+  /**
+   * Global time tick (used for frame-based updates).
+   */
   tick: number;
   setTick: (t: number) => void;
 
+  /**
+   * Scene models and selection.
+   */
   models: ModelItem[];
   selectedId: string | null;
 
+  /**
+   * Current transform mode.
+   */
   mode: TransformMode;
 
+  /**
+   * Camera state.
+   */
   camera: CameraState;
 
+  /**
+   * Camera interaction lock state.
+   */
   isCameraLocked: boolean;
   toggleCameraLock: () => void;
 
+  /**
+   * Environment (HDRI / preset).
+   */
   environment: string | null;
   environmentType: EnvironmentType;
   isEnvLoading: boolean;
@@ -77,12 +128,18 @@ type ModelState = {
   setEnvironment: (env: string | null, type?: EnvironmentType) => void;
   setEnvLoading: (v: boolean) => void;
 
+  /**
+   * Upload state (HUD).
+   */
   isUploading: boolean;
   progress: number;
 
+  /**
+   * Core actions.
+   */
   addModel: (url: string) => void;
   selectModel: (id: string | null) => void;
-  removeModel: (id: string) => void; // 🔥 NEW
+  removeModel: (id: string) => void;
 
   addSavePoint: (modelId: string) => void;
   restoreSavePoint: (modelId: string, pointId: string) => void; 
@@ -104,60 +161,105 @@ type ModelState = {
 };
 
 /* =========================
-🏗 STORE
+🏗 STORE IMPLEMENTATION
 ========================= */
 
+/**
+ * useModelStore
+ *
+ * Global Zustand store managing:
+ * - Scene data
+ * - UI state
+ * - Interaction logic
+ */
 export const useModelStore = create<ModelState>((set, get) => ({
-  // 🪟 PANEL STATES (Defaults to true so they show on load)
+  // 🪟 PANEL STATES (Defaults visible)
   isObjectsOpen: true,
   setIsObjectsOpen: (isOpen) => set({ isObjectsOpen: isOpen }),
+
   isInspectorOpen: true,
   setIsInspectorOpen: (isOpen) => set({ isInspectorOpen: isOpen }),
 
+  /**
+   * Active Three.js object reference.
+   */
   activeObject: null,
   setActiveObject: (obj) => set({ activeObject: obj }),
 
+  /**
+   * Frame tick.
+   */
   tick: 0,
   setTick: (t) => set({ tick: t }),
 
+  /**
+   * Scene models.
+   */
   models: [],
   selectedId: null,
 
+  /**
+   * Default transform mode.
+   */
   mode: "rotate",
 
+  /**
+   * Default camera state.
+   */
   camera: {
     position: [0, 0, 5],
     rotation: [0, 0, 0],
   },
 
+  /**
+   * Camera lock toggle.
+   */
   isCameraLocked: true,
   toggleCameraLock: () =>
     set((state) => ({
       isCameraLocked: !state.isCameraLocked,
     })),
 
+  /**
+   * Default environment (preset).
+   */
   environment: "sunset",
   environmentType: "preset",
   isEnvLoading: false,
 
+  /**
+   * Set environment (preset or custom HDRI).
+   */
   setEnvironment: (env, type = "preset") =>
     set({
       environment: env,
       environmentType: env ? type : null,
     }),
 
+  /**
+   * Set environment loading state.
+   */
   setEnvLoading: (v) =>
     set({
       isEnvLoading: v,
     }),
 
+  /**
+   * Upload state.
+   */
   isUploading: false,
   progress: 0,
 
   /* =========================
-  📦 ACTIONS
+  📦 MODEL ACTIONS
   ========================= */
 
+  /**
+   * Adds a new model to the scene.
+   * - Generates unique ID
+   * - Assigns default transform
+   * - Auto-selects the new model
+   */
   addModel: (url) =>
     set((state) => {
       const id = crypto.randomUUID();
@@ -182,15 +284,21 @@ export const useModelStore = create<ModelState>((set, get) => ({
       };
     }),
 
+  /**
+   * Selects a model.
+   */
   selectModel: (id) =>
     set({
       selectedId: id,
     }),
 
-  // 🔥 NEW REMOVE FUNCTION
+  /**
+   * Removes a model from the scene.
+   * - Clears selection if needed
+   * - Clears active object if needed
+   */
   removeModel: (id) =>
     set((state) => {
-      // If we delete the currently selected object, deselect it
       const isSelected = state.selectedId === id;
       
       return {
@@ -201,9 +309,15 @@ export const useModelStore = create<ModelState>((set, get) => ({
     }),
 
   /* =========================
-  💾 SAVE POINT
+  💾 SAVE POINT SYSTEM
   ========================= */
 
+  /**
+   * Creates a save point for a model.
+   * Captures:
+   * - Model transform
+   * - Current camera state
+   */
   addSavePoint: (modelId) => {
     const state = get();
     const model = state.models.find((m) => m.id === modelId);
@@ -229,10 +343,9 @@ export const useModelStore = create<ModelState>((set, get) => ({
     });
   },
 
-  /* =========================
-  🔥 RESTORE SAVE POINT
-  ========================= */
-
+  /**
+   * Restores a saved transform + camera state.
+   */
   restoreSavePoint: (modelId, pointId) => {
     const state = get();
 
@@ -258,9 +371,12 @@ export const useModelStore = create<ModelState>((set, get) => ({
   },
 
   /* =========================
-  📤 EXPORT
+  📤 EXPORT SYSTEM
   ========================= */
 
+  /**
+   * Exports full scene data as JSON file.
+   */
   exportScene: () => {
     const state = get();
 
@@ -278,16 +394,19 @@ export const useModelStore = create<ModelState>((set, get) => ({
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "threejs-scene.json"; // Updated default name
+    a.download = "threejs-scene.json";
     a.click();
 
     URL.revokeObjectURL(url);
   },
 
   /* =========================
-  🔄 TRANSFORM
+  🔄 TRANSFORM SYSTEM
   ========================= */
 
+  /**
+   * Updates model transform.
+   */
   updateTransform: (id, transform) =>
     set((state) => ({
       models: state.models.map((m) =>
@@ -295,16 +414,28 @@ export const useModelStore = create<ModelState>((set, get) => ({
       ),
     })),
 
+  /**
+   * Set transform mode.
+   */
   setMode: (mode) => set({ mode }),
 
+  /**
+   * Update camera state.
+   */
   setCamera: (cam) => set({ camera: cam }),
 
+  /**
+   * Start upload process.
+   */
   startUpload: () =>
     set({
       isUploading: true,
       progress: 0,
     }),
 
+  /**
+   * Update upload progress.
+   */
   setProgress: (p) =>
     set({
       progress: p,

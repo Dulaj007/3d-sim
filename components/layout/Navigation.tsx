@@ -3,12 +3,40 @@
 import React, { useState } from "react";
 import { useModelStore } from "@/store/useModelStore";
 
+/**
+ * Navigation Component
+ *
+ * Purpose:
+ * - Main top navigation bar of the application
+ * - Provides access to:
+ *   - Branding & social links
+ *   - Camera lock control
+ *   - Environment (HDRI) selection & upload
+ *   - Scene export
+ *   - Mobile responsive menu
+ *
+ * Notes:
+ * - Uses global store for 3D-related state
+ * - Fully responsive (desktop + mobile sidebar)
+ */
 export default function Navigation() {
   // --- UI STATE ---
+  /**
+   * Controls visibility of the top navigation (slide up/down).
+   * Used by the V-shaped toggle button.
+   */
   const [isOpen, setIsOpen] = useState(true); // V-Shape drop down
+
+  /**
+   * Controls visibility of the mobile sidebar menu.
+   */
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // Mobile Hamburger Sidebar
 
   // --- ENV VARIABLES ---
+  /**
+   * App configuration pulled from environment variables.
+   * Provides branding and external links.
+   */
   const appName = process.env.NEXT_PUBLIC_APP_NAME || "Aether3D";
   const facebookUrl = process.env.NEXT_PUBLIC_FACEBOOK_URL || "#";
   const linkedinUrl = process.env.NEXT_PUBLIC_LINKEDIN_URL || "#";
@@ -16,6 +44,9 @@ export default function Navigation() {
   const instagramUrl = process.env.NEXT_PUBLIC_INSTAGRAM_URL || "#";
 
   // --- 3D STORE STATE ---
+  /**
+   * Global store bindings for scene control.
+   */
   const isCameraLocked = useModelStore((s) => s.isCameraLocked);
   const toggleCameraLock = useModelStore((s) => s.toggleCameraLock);
   const exportScene = useModelStore((s) => s.exportScene);
@@ -24,18 +55,44 @@ export default function Navigation() {
   const setEnvLoading = useModelStore((s) => s.setEnvLoading);
 
   // --- HANDLERS ---
+  /**
+   * Handles custom HDRI file uploads.
+   *
+   * Flow:
+   * 1. Read file from input
+   * 2. Create temporary object URL
+   * 3. Detect file type (HDR or EXR)
+   * 4. Update global environment state
+   */
   const handleHDRIUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     const url = URL.createObjectURL(file);
+
+    /**
+     * Determine environment type based on file extension.
+     */
     const ext = file.name.split(".").pop()?.toLowerCase();
     let type: "hdr" | "exr" = "hdr";
     if (ext === "exr") type = "exr";
+
+    /**
+     * Trigger loading state and apply environment.
+     */
     setEnvLoading(true);
     setEnvironment(url, type);
+
+    /**
+     * Reset input to allow re-uploading same file.
+     */
     e.target.value = "";
   };
 
+  /**
+   * Predefined HDRI environment presets.
+   * Used by Drei's Environment component.
+   */
   const presets = [
      "sunset","city", "dawn", "night", "warehouse", 
     "forest", "apartment", "studio", "park", "lobby",
@@ -43,6 +100,10 @@ export default function Navigation() {
 
   return (
     <>
+      {/* =========================
+          MAIN NAV CONTAINER
+          - Slides in/out vertically
+      ========================= */}
       <div
         className={`fixed top-0 left-0 w-full z-40 transition-transform duration-500 ease-in-out ${
           isOpen ? "translate-y-0" : "-translate-y-full"
@@ -56,9 +117,9 @@ export default function Navigation() {
                 🔷 LEFT: BRAND & SOCIALS
             ========================= */}
             <div className="flex items-center gap-1">
-         <span className="text-sm md:text-xl font-bold tracking-wide uppercase italic ">
-  {appName}
-</span>
+            <span className="text-sm md:text-xl font-bold tracking-wide uppercase italic ">
+              {appName}
+            </span>
               
               {/* Social Icons - Combined Pill with Solid Icons, Hover Colors & Scale */}
               <div className="hidden lg:flex items-center gap-2   px-2 py-1.5 ">

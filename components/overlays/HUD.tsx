@@ -3,26 +3,69 @@
 import { useModelStore } from "@/store/useModelStore";
 import React from "react";
 
+/**
+ * HUD (Heads-Up Display) Component
+ *
+ * Purpose:
+ * - Acts as the initial onboarding / empty state screen
+ * - Guides the user to upload their first 3D model
+ * - Displays upload progress feedback
+ *
+ * Behavior:
+ * - Automatically hides when at least one model exists in the scene
+ * - Reappears only when the scene is empty
+ */
 export default function HUD() {
+  /**
+   * Store bindings for model management.
+   */
   const addModel = useModelStore((s) => s.addModel);
   const models = useModelStore((s) => s.models);
 
+  /**
+   * Application name (configurable via environment variables).
+   */
   const appName = process.env.NEXT_PUBLIC_APP_NAME || "Aether3D";
+
+  /**
+   * Upload state management from store.
+   */
   const isUploading = useModelStore((s) => s.isUploading);
   const progress = useModelStore((s) => s.progress);
   const startUpload = useModelStore((s) => s.startUpload);
   const setProgress = useModelStore((s) => s.setProgress);
 
-  // ✅ Hide HUD if at least one model exists
+  /**
+   * Conditional rendering:
+   * - If there is at least one model in the scene,
+   *   the HUD is not rendered.
+   */
   if (models.length > 0) return null;
 
+  /**
+   * Handles file input for model upload.
+   *
+   * Flow:
+   * 1. Read selected file
+   * 2. Trigger upload state
+   * 3. Simulate upload progress
+   * 4. Create object URL
+   * 5. Add model to scene
+   */
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    /**
+     * Set uploading state.
+     */
     startUpload();
 
-    // 🔥 Simulated upload
+    /**
+     * Simulated upload logic:
+     * - Progress increases every 100ms
+     * - Stops at 100%
+     */
     let p = 0;
     const interval = setInterval(() => {
       p += 10;
@@ -31,8 +74,15 @@ export default function HUD() {
       if (p >= 100) {
         clearInterval(interval);
 
+        /**
+         * Create a temporary object URL for the file.
+         */
         const url = URL.createObjectURL(file);
-        addModel(url); // ✅ add to multi-model system
+
+        /**
+         * Add model to scene (supports multiple models).
+         */
+        addModel(url);
       }
     }, 100);
   };

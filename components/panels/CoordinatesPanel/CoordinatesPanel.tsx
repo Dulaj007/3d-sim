@@ -5,65 +5,127 @@ import { useModelStore } from "@/store/useModelStore";
 import VectorInput from "./VectorInput";
 import DisplayRow from "./DisplayRow";
 
+/**
+ * CoordinatesPanel (Inspector)
+ *
+ * Purpose:
+ * - Displays and edits transform values (Position, Rotation, Scale) of the selected model
+ * - Shows current camera transform values
+ * - Provides a draggable floating panel similar to professional 3D editors
+ *
+ * Behavior:
+ * - Only renders when:
+ *   1. Component is mounted (client-side)
+ *   2. Inspector panel is enabled from global state
+ */
 export default function CoordinatesPanel() {
   // --- 3D STORE STATE ---
+  /**
+   * Retrieve scene and UI state from global store.
+   */
   const models = useModelStore((s) => s.models);
   const selectedId = useModelStore((s) => s.selectedId);
   const updateTransform = useModelStore((s) => s.updateTransform);
   const camera = useModelStore((s) => s.camera);
   const activeObject = useModelStore((s) => s.activeObject);
+
+  /**
+   * Derive currently selected model from model list.
+   */
   const selected = models.find((m) => m.id === selectedId);
   
-  // NOTE: You need to add these two to your useModelStore!
+  /**
+   * Inspector panel visibility state.
+   */
   const isInspectorOpen = useModelStore((s) => s.isInspectorOpen);
   const setIsInspectorOpen = useModelStore((s) => s.setIsInspectorOpen);
 
   // --- DRAG STATE & LOGIC ---
-  // Default position: top-20, right-4 (calculated roughly for standard desktop)
+  /**
+   * Panel position in viewport (absolute coordinates).
+   */
   const [position, setPosition] = useState({ x: 0, y: 80 });
+
+  /**
+   * Ensures component only renders after client-side mount.
+   * Prevents hydration mismatch in Next.js.
+   */
   const [isMounted, setIsMounted] = useState(false);
+
+  /**
+   * Tracks whether panel is currently being dragged.
+   */
   const draggingRef = useRef(false);
+
+  /**
+   * Stores mouse offset relative to panel position.
+   */
   const dragOffset = useRef({ x: 0, y: 0 });
 
-  // Initialize position to the right side of the screen on first mount
+  /**
+   * Initialize panel position on first mount.
+   * Positions panel near the right side of the screen.
+   */
   useEffect(() => {
     setPosition({ x: window.innerWidth - 280, y: 80 }); // 280px accounts for width + margin
     setIsMounted(true);
   }, []);
 
+  /**
+   * Handles global mouse movement and drag behavior.
+   * Updates panel position while dragging.
+   */
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!draggingRef.current) return;
+
       setPosition({
         x: e.clientX - dragOffset.current.x,
         y: e.clientY - dragOffset.current.y,
       });
     };
 
+    /**
+     * Ends dragging when mouse is released.
+     */
     const handleMouseUp = () => {
       draggingRef.current = false;
     };
 
+    /**
+     * Attach global listeners only after mount.
+     */
     if (isMounted) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
     }
 
+    /**
+     * Cleanup listeners on unmount.
+     */
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isMounted]);
 
+  /**
+   * Starts dragging when user clicks the panel header.
+   */
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     draggingRef.current = true;
+
     dragOffset.current = {
       x: e.clientX - position.x,
       y: e.clientY - position.y,
     };
   };
 
-  // If the panel is toggled off, or hasn't mounted client-side yet, don't render it
+  /**
+   * Do not render:
+   * - Before mount (SSR safety)
+   * - When inspector is disabled
+   */
   if (!isMounted || !isInspectorOpen) return null;
 
   return (

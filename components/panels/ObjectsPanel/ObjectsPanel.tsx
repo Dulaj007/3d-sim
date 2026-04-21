@@ -3,65 +3,130 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useModelStore } from "@/store/useModelStore";
 
+/**
+ * ObjectsPanel Component
+ *
+ * Purpose:
+ * - Displays all models currently in the scene
+ * - Allows:
+ *   - Selecting models
+ *   - Deleting models
+ *   - Managing save points (create + restore)
+ *
+ * Behavior:
+ * - Draggable floating panel
+ * - Only visible when enabled via global state
+ * - Acts as a scene hierarchy / object manager
+ */
 export default function ObjectsPanel() {
   // --- 3D STORE STATE ---
+  /**
+   * Retrieve scene and object management state from store.
+   */
   const models = useModelStore((s) => s.models);
   const selectedId = useModelStore((s) => s.selectedId);
   const selectModel = useModelStore((s) => s.selectModel);
   const addSavePoint = useModelStore((s) => s.addSavePoint);
   const restoreSavePoint = useModelStore((s) => s.restoreSavePoint);
   
-  // 🔥 NEW: Bring in the remove action
+  /**
+   * Removes a model from the scene.
+   */
   const removeModel = useModelStore((s) => s.removeModel);
 
+  /**
+   * Panel visibility state.
+   */
   const isObjectsOpen = useModelStore((s) => s.isObjectsOpen);
   const setIsObjectsOpen = useModelStore((s) => s.setIsObjectsOpen);
 
-  // dropdown state (SAFE)
+  /**
+   * Tracks which save point dropdown is open.
+   */
   const [openId, setOpenId] = useState<string | null>(null);
 
   // --- DRAG STATE & LOGIC ---
-  const [position, setPosition] = useState({ x: 16, y: 80 }); 
+  /**
+   * Panel position in viewport.
+   */
+  const [position, setPosition] = useState({ x: 16, y: 80 });
+
+  /**
+   * Ensures client-side rendering only.
+   */
   const [isMounted, setIsMounted] = useState(false);
+
+  /**
+   * Tracks drag state.
+   */
   const draggingRef = useRef(false);
+
+  /**
+   * Offset between cursor and panel position during drag.
+   */
   const dragOffset = useRef({ x: 0, y: 0 });
 
+  /**
+   * Mark component as mounted.
+   */
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  /**
+   * Handle dragging movement and release.
+   */
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (!draggingRef.current) return;
+
       setPosition({
         x: e.clientX - dragOffset.current.x,
         y: e.clientY - dragOffset.current.y,
       });
     };
 
+    /**
+     * Stop dragging on mouse release.
+     */
     const handleMouseUp = () => {
       draggingRef.current = false;
     };
 
+    /**
+     * Attach listeners after mount.
+     */
     if (isMounted) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
     }
 
+    /**
+     * Cleanup listeners.
+     */
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isMounted]);
 
+  /**
+   * Start dragging on mouse down.
+   */
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     draggingRef.current = true;
+
     dragOffset.current = {
       x: e.clientX - position.x,
       y: e.clientY - position.y,
     };
   };
 
+  /**
+   * Do not render:
+   * - Before mount
+   * - When panel is disabled
+   */
   if (!isMounted || !isObjectsOpen) return null;
 
   return (
