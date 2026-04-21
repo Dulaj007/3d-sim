@@ -74,7 +74,7 @@ function CameraTracker() {
     };
 
     /**
-     * Initial sync on mount.
+     * Initial sync on mount .
      */
     update();
 
