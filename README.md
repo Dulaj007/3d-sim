@@ -75,4 +75,66 @@ npm run dev
 http://localhost:3000
 ```
 
+## ✨ Features
 
+### 🧱 Core 3D Editing
+
+- Upload and place **multiple 3D models** into the scene  
+- Freely **move, rotate, and scale** each model  
+- Real-time updates for precise layout control  
+- Designed for intuitive drag-and-adjust workflows  
+
+---
+
+### 🌍 Environment Controls
+
+- Switch between different **environment presets** (e.g. forest, studio, HDRI lighting)  
+- Support for **custom environment maps**  
+- **Camera controls**:
+  - Orbit, zoom, and pan freely  
+  - Option to **lock camera position** for consistent viewing  
+
+---
+
+### 🎬 Animation System (Save Points)
+
+- Create animations using a **save point system**  
+- Store multiple states of a model including:
+  - Position  
+  - Rotation  
+  - Scale  
+- Each save point acts like a **keyframe**  
+- Enables smooth transitions and scene-based animations  
+
+---
+
+### 💾 Saving System
+
+- Export the entire scene as a **single JSON file**  
+- Includes:
+  - All models and their transforms  
+  - All animation save points  
+  - Camera position and settings  
+- Allows full scene reconstruction at any time  
+
+---
+
+### 🧩 Inspector Panel
+
+- Displays details of the **selected object**  
+- Shows real-time values for:
+  - Position  
+  - Rotation  
+  - Scale  
+- Also includes **world camera data** for reference and debugging  
+
+---
+
+### 📂 Object Panel
+
+- Lists all **imported models** in the scene  
+- Displays all **saved animation points**  
+- Enables quick selection and navigation between objects  
+- Helps manage complex scenes efficiently  
+
+---
