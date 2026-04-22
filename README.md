@@ -139,7 +139,7 @@ http://localhost:3000
 
 ---
 
-## 🧪 Test Case – Scene Export & Reconstruction Accuracy
+## 🧪 Test Case – Scene Export & Reconstruction Accuracy ([#20](../../issues/20))
 
 ![Editor View](https://jpcdn.it/img/small/a82871654056ebd8ee896587b37b2cc0.png)
 
