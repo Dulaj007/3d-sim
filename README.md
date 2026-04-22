@@ -138,3 +138,80 @@ http://localhost:3000
 - Helps manage complex scenes efficiently  
 
 ---
+
+## 🧪 Test Case – Scene Export & Reconstruction Accuracy
+
+![Editor View](https://jpcdn.it/img/small/a82871654056ebd8ee896587b37b2cc0.png)
+
+### 📌 Objective
+
+To verify that the **exported JSON data** (including model transforms and camera data) accurately reproduces the same scene when reloaded.
+
+---
+
+### 🧱 Test Scenario
+
+In this test, we used the editor to:
+
+- Add **two butterfly models**
+- Add a **tree stick model**
+- Adjust their:
+  - Position  
+  - Rotation  
+  - Scale  
+- Set a specific **camera view**
+- Save all coordinates and configurations  
+
+The above image represents the **editor view**, where the scene was manually arranged.
+
+---
+
+### 💾 Step 1 – Export Scene
+
+- Export the scene as a **JSON file**
+- This file contains:
+  - Model data (position, rotation, scale)
+  - Camera position and rotation
+  - All relevant scene configuration  
+
+---
+
+### 🔁 Step 2 – Recreate Scene from JSON
+
+Using the exported JSON data:
+
+- A new test scene was created
+- The same models were loaded:
+  - Two butterflies  
+  - One tree stick  
+- Applied:
+  - Exact transform values (position, rotation, scale)  
+  - Same camera data  
+
+---
+
+### 🔍 Step 3 – Validation
+
+The recreated scene was visually compared with the original editor scene.
+
+![Reconstructed Scene](https://jpcdn.it/img/small/ac5c190c2f3ac052cd8a6dcdd69fee22.png)
+
+---
+
+### ✅ Result
+
+- The reconstructed scene **perfectly matches** the original editor view  
+- Model placements, orientations, and scale are identical  
+- Camera perspective is also consistent  
+
+---
+
+### 🎯 Conclusion
+
+This test confirms that:
+
+- The **export system is accurate and reliable**  
+- Scene data can be safely stored and reused  
+- The tool supports **full scene reconstruction from JSON** without loss of fidelity  
+
+---
