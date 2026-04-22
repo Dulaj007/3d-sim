@@ -1,4 +1,4 @@
-![ThreeJS Layout Tool](https://i.postimg.cc/brfjfF3k/Screenshot-2026-04-21-202458.png)
+![ThreeJS Layout Tool](https://jpcdn.it/img/small/a82871654056ebd8ee896587b37b2cc0.png)
 
 # ThreeJS Layout Tool
 
@@ -51,12 +51,12 @@ Follow these steps to run the project locally:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/Dulaj007/3d-sim.git
 ```
 ### 2. Navigate into the project
 
 ```bash
-cd your-repo-name
+cd 3d-sim
 ```
 
 ### 3. Install dependencies
@@ -75,4 +75,4 @@ npm run dev
 http://localhost:3000
 ```
 
-When you're ready, tell me what to add next (features, architecture, 3D system, export system, etc.) and I’ll build the next section 🔥
+
