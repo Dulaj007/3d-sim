@@ -1,4 +1,4 @@
-![ThreeJS Layout Tool](https://jpcdn.it/img/small/a82871654056ebd8ee896587b37b2cc0.png)
+![ThreeJS Layout Tool](https://jpcdn.it/img/f574c6e844a7ae68aa82f5640be7c05c.png)
 
 # ThreeJS Layout Tool
 
@@ -141,7 +141,7 @@ http://localhost:3000
 
 ## 🧪 Test Case – Scene Export & Reconstruction Accuracy ([#20](../../issues/20))
 
-![Editor View](https://jpcdn.it/img/small/a82871654056ebd8ee896587b37b2cc0.png)
+![Editor View](https://jpcdn.it/img/f574c6e844a7ae68aa82f5640be7c05c.png)
 
 ### 📌 Objective
 
