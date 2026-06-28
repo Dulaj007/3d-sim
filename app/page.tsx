@@ -8,6 +8,7 @@ import Scene from "@/components/3d/Scene/Scene";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import Navigation from "@/components/layout/Navigation";
 import HUD from "@/components/overlays/HUD";
+import Tutorial from "@/components/overlays/Tutorial";
 import CoordinatesPanel from "@/components/panels/CoordinatesPanel/CoordinatesPanel";
 import ObjectsPanel from "@/components/panels/ObjectsPanel/ObjectsPanel"; // Newly introduced panel for object management
 
@@ -88,6 +89,13 @@ export default function HomePage() {
           <HUD />
         </div>
       )}
+
+      {/*
+        Guided Tour
+        - Walks first-time users through the controls after their first model lands
+        - Replayable via the "?" button in the top navigation
+      */}
+      <Tutorial />
     </main>
   );
 }

@@ -93,13 +93,13 @@ export default function HUD() {
       {/* Subtle ambient background glow */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900/20 via-transparent to-transparent pointer-events-none" />
 
-      {/* 🃏 MAIN WELCOME CARD */}
-      <div className="relative pointer-events-auto w-full max-w-md md:max-w-2xl bg-black/50 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] p-10 text-center overflow-hidden">
-        
+      {/* Main welcome card */}
+      <div className="relative pointer-events-auto w-full max-w-md md:max-w-2xl bg-black/50 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-[0_20px_70px_rgba(0,0,0,0.55)] p-10 text-center overflow-hidden animate-fade-in-scale">
+
         {/* Decorative Top Highlight */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-50" />
 
-        {/* 🧊 LOGO / ICON */}
+        {/* Logo */}
         <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-400 to-transparent rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20 border border-white/10">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
@@ -108,30 +108,34 @@ export default function HUD() {
           </svg>
         </div>
 
-        {/* 🖋️ TYPOGRAPHY */}
-        <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight">
+        {/* Heading and copy */}
+        <h1 className="font-display text-3xl md:text-4xl font-semibold text-white mb-3 tracking-tight">
            {appName}
         </h1>
-        
-  <p className="text-sm text-gray-400 mb-8 leading-relaxed px-2">
-          A visual layout utility for Three.js and React Three Fiber workflows. Parse and instantiate multiple meshes to compose your scene graph in real time. Capture spatial coordinates (Position, Rotation, Scale) to define camera states or animation keyframes, and export your entire scene's transform data as a structured JSON payload for direct canvas integration.
+
+        <p className="text-sm text-gray-300 mb-8 leading-relaxed px-2">
+          Bring your 3D models into one scene and arrange them however you
+          like. You can save checkpoints of where everything (and the
+          camera) sits, which is handy if you&rsquo;re putting together an
+          animation. Export the scene whenever you&rsquo;re ready to use it
+          elsewhere.
         </p>
 
-        {/* 📤 UPLOAD ZONE */}
+        {/* Upload zone */}
         {!isUploading && (
           <label className="group relative block cursor-pointer">
             <input type="file" className="hidden" onChange={handleFile} accept=".glb,.gltf,.obj" />
-            <div className="flex flex-col items-center justify-center py-8 px-6 rounded-2xl border-2 border-dashed border-white/20 bg-white/5 group-hover:bg-white/10 group-hover:border-blue-400/50 transition-all duration-300">
+            <div className="flex flex-col items-center justify-center py-8 px-6 rounded-2xl border-2 border-dashed border-white/20 bg-white/5 group-hover:bg-white/10 group-hover:border-blue-400/50 group-hover:scale-[1.01] transition-all duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-blue-300 mb-3 transition-colors">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
-              <span className="text-white font-medium mb-1">Click to browse files</span>
+              <span className="text-white font-medium mb-1">Drop a file or click to browse</span>
               <span className="text-xs text-gray-500">Supports .GLB, .GLTF, .OBJ</span>
             </div>
           </label>
         )}
 
-        {/* ⏳ PROGRESS BAR */}
+        {/* Progress bar */}
         {isUploading && (
           <div className="w-full mt-4 bg-white/5 p-6 rounded-2xl border border-white/10">
             <div className="flex justify-between text-xs text-gray-400 mb-2 font-medium">
