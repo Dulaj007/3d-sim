@@ -8,6 +8,7 @@ import Scene from "@/components/3d/Scene/Scene";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import Navigation from "@/components/layout/Navigation";
 import HUD from "@/components/overlays/HUD";
+import Splash from "@/components/overlays/Splash";
 import Tutorial from "@/components/overlays/Tutorial";
 import CoordinatesPanel from "@/components/panels/CoordinatesPanel/CoordinatesPanel";
 import ObjectsPanel from "@/components/panels/ObjectsPanel/ObjectsPanel"; // Newly introduced panel for object management
@@ -96,6 +97,13 @@ export default function HomePage() {
         - Replayable via the "?" button in the top navigation
       */}
       <Tutorial />
+
+      {/*
+        Splash
+        - Brief branded intro shown once per browser tab session
+        - Sits above every other layer while it is visible
+      */}
+      <Splash />
     </main>
   );
 }

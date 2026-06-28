@@ -120,3 +120,35 @@ body {
 .animate-float-c {
   animation: float-c 24s ease-in-out infinite;
 }
+
+/* =========================
+   Splash screen
+   ========================= */
+@keyframes splash-fill {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0% 0 0 0); }
+}
+
+@keyframes splash-text-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes splash-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; pointer-events: none; }
+}
+
+.splash-fill {
+  clip-path: inset(100% 0 0 0);
+  animation: splash-fill 0.7s cubic-bezier(0.65, 0, 0.35, 1) 0.15s forwards;
+}
+
+.splash-text {
+  opacity: 0;
+  animation: splash-text-in 0.5s ease-out 0.4s forwards;
+}
+
+.splash-overlay {
+  animation: splash-overlay-out 0.4s ease-out 1.5s forwards;
+}
