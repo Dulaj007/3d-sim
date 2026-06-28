@@ -73,15 +73,15 @@ export default function BottomNavigation() {
   };
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3">
-      
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 animate-fade-in-up">
+
       {/* =========================
          Add Model Button
          =========================
          - Hidden file input triggered by styled label
          - Accepts GLB, GLTF, and OBJ formats
       */}
-      <label className="cursor-pointer group flex items-center gap-2 px-4 py-2 bg-blue-700/90 hover:bg-blue-600 backdrop-blur-md transition-all rounded-full border border-blue-400/50 text-white shadow-lg shadow-indigo-500/25 hover:scale-105">
+      <label data-tour="add-model" className="cursor-pointer group flex items-center gap-2 px-4 py-2 bg-blue-700/90 hover:bg-blue-600 backdrop-blur-md transition-all duration-300 rounded-full border border-blue-400/50 text-white shadow-[0_8px_24px_rgba(79,70,229,0.35)] hover:shadow-[0_8px_28px_rgba(79,70,229,0.5)] hover:scale-105">
         <input
           type="file"
           className="hidden"
@@ -110,7 +110,7 @@ export default function BottomNavigation() {
            translate | rotate | scale
          - Updates global transform mode used by TransformControls
       */}
-      <div className="flex items-center p-1.5 bg-black/50 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+      <div data-tour="transform-modes" className="flex items-center p-1.5 bg-black/50 backdrop-blur-md rounded-full border border-white/10 shadow-xl">
         {[
           { 
             key: "translate", 
@@ -180,7 +180,7 @@ export default function BottomNavigation() {
          - Objects Panel (left)
          - Inspector Panel (right)
       */}
-      <div className="flex items-center gap-1.5 p-1.5 bg-black/50 backdrop-blur-md rounded-full border border-white/10 shadow-lg">
+      <div className="flex items-center gap-1.5 p-1.5 bg-black/50 backdrop-blur-md rounded-full border border-white/10 shadow-xl">
 
         {/* Toggle Objects Panel */}
         <button

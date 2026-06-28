@@ -131,13 +131,14 @@ export default function ObjectsPanel() {
 
   return (
     <div
-      className="fixed z-50 w-64 bg-black/60 backdrop-blur-xl rounded-xl border border-white/10 text-white shadow-2xl flex flex-col overflow-hidden"
+      data-tour="objects-panel"
+      className="fixed z-50 w-64 bg-black/60 backdrop-blur-xl rounded-xl border border-white/10 text-white shadow-[0_16px_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden animate-fade-in-scale"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
       }}
     >
-      {/* 🛑 DRAG HANDLE & HEADER */}
+      {/* Drag handle and header */}
       <div
         onMouseDown={handleMouseDown}
         className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10 cursor-grab active:cursor-grabbing select-none"
@@ -161,7 +162,7 @@ export default function ObjectsPanel() {
         </button>
       </div>
 
-      {/* 🛠️ PANEL CONTENT */}
+      {/* Panel content */}
       <div className="p-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
         {models.length === 0 && (
            <div className="flex flex-col items-center justify-center py-4 text-gray-500">
@@ -172,7 +173,7 @@ export default function ObjectsPanel() {
         {models.map((model) => (
           <div key={model.id} className="mb-4 last:mb-0">
             
-            {/* 🎯 MODEL ROW (Select + Delete) */}
+            {/* Model row: select and delete */}
             <div className="flex items-center gap-2 mb-2">
               <button
                 onClick={() => selectModel(model.id)}
@@ -188,7 +189,7 @@ export default function ObjectsPanel() {
                 )}
               </button>
 
-              {/* 🗑️ DELETE BUTTON */}
+              {/* Delete button */}
               <button
                 onClick={() => removeModel(model.id)}
                 className="p-2 rounded-md bg-white/5 text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors border border-transparent hover:border-red-500/30"
@@ -200,10 +201,10 @@ export default function ObjectsPanel() {
               </button>
             </div>
 
-            {/* 💾 SAVE SYSTEM */}
+            {/* Save point system */}
             {selectedId === model.id && (
               <div className="pl-2 border-l-2 border-white/10 ml-2">
-                {/* ➕ SAVE POINT */}
+                {/* Add save point */}
                 <button
                   onClick={() => addSavePoint(model.id)}
                   className="w-full flex items-center justify-center gap-1 text-xs px-2 py-1.5 mb-2 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors"
@@ -212,14 +213,14 @@ export default function ObjectsPanel() {
                   Save Point
                 </button>
 
-                {/* 📍 SAVE POINT LIST */}
+                {/* Save point list */}
                 <div className="space-y-1.5">
                   {model.savePoints.map((p) => {
                     const isOpen = openId === p.id;
 
                     return (
                       <div key={p.id} className="text-xs">
-                        {/* 🔥 CLICKABLE ROW */}
+                        {/* Clickable row */}
                         <div
                           onClick={() => restoreSavePoint(model.id, p.id)}
                           className="flex justify-between items-center px-2 py-1.5 bg-white/5 border border-white/5 rounded cursor-pointer hover:bg-white/15 transition-colors"
@@ -229,7 +230,7 @@ export default function ObjectsPanel() {
                             <span className="truncate text-gray-200">{p.name}</span>
                           </div>
 
-                          {/* 🔽 TOGGLE */}
+                          {/* Toggle */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -241,7 +242,7 @@ export default function ObjectsPanel() {
                           </button>
                         </div>
 
-                        {/* 📂 DROPDOWN DATA */}
+                        {/* Dropdown data */}
                         {isOpen && (
                           <div className="mt-1 p-2 bg-black/40 rounded-md border border-white/10 space-y-1.5 text-[10px] text-gray-300">
                             <div className="flex justify-between">
