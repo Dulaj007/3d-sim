@@ -4,7 +4,7 @@ import { create } from "zustand";
 import * as THREE from "three";
 
 /* =========================
-📦 TYPES
+TYPES
 ========================= */
 
 /**
@@ -64,7 +64,7 @@ type CameraState = {
 type EnvironmentType = "preset" | "hdr" | "exr" | null;
 
 /* =========================
-🧠 STORE TYPE
+STORE TYPE
 ========================= */
 
 /**
@@ -77,7 +77,7 @@ type EnvironmentType = "preset" | "hdr" | "exr" | null;
  * - Actions
  */
 type ModelState = {
-  // 🪟 PANEL STATES
+  // PANEL STATES
   isObjectsOpen: boolean;
   setIsObjectsOpen: (isOpen: boolean) => void;
   isInspectorOpen: boolean;
@@ -161,7 +161,7 @@ type ModelState = {
 };
 
 /* =========================
-🏗 STORE IMPLEMENTATION
+STORE IMPLEMENTATION
 ========================= */
 
 /**
@@ -173,7 +173,7 @@ type ModelState = {
  * - Interaction logic
  */
 export const useModelStore = create<ModelState>((set, get) => ({
-  // 🪟 PANEL STATES (Defaults visible)
+  // PANEL STATES (Defaults visible)
   isObjectsOpen: true,
   setIsObjectsOpen: (isOpen) => set({ isObjectsOpen: isOpen }),
 
@@ -223,7 +223,7 @@ export const useModelStore = create<ModelState>((set, get) => ({
   /**
    * Default environment (preset).
    */
-  environment: "sunset",
+  environment: "dawn",
   environmentType: "preset",
   isEnvLoading: false,
 
@@ -251,7 +251,7 @@ export const useModelStore = create<ModelState>((set, get) => ({
   progress: 0,
 
   /* =========================
-  📦 MODEL ACTIONS
+  MODEL ACTIONS
   ========================= */
 
   /**
@@ -309,7 +309,7 @@ export const useModelStore = create<ModelState>((set, get) => ({
     }),
 
   /* =========================
-  💾 SAVE POINT SYSTEM
+  SAVE POINT SYSTEM
   ========================= */
 
   /**
@@ -371,7 +371,7 @@ export const useModelStore = create<ModelState>((set, get) => ({
   },
 
   /* =========================
-  📤 EXPORT SYSTEM
+  EXPORT SYSTEM
   ========================= */
 
   /**
@@ -401,7 +401,7 @@ export const useModelStore = create<ModelState>((set, get) => ({
   },
 
   /* =========================
-  🔄 TRANSFORM SYSTEM
+  TRANSFORM SYSTEM
   ========================= */
 
   /**

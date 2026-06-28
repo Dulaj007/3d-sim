@@ -130,13 +130,14 @@ export default function CoordinatesPanel() {
 
   return (
     <div
-      className="fixed z-50 w-64 bg-black/60 backdrop-blur-xl rounded-xl border border-white/10 text-white shadow-2xl flex flex-col overflow-hidden"
+      data-tour="inspector-panel"
+      className="fixed z-50 w-64 bg-black/60 backdrop-blur-xl rounded-xl border border-white/10 text-white shadow-[0_16px_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden animate-fade-in-scale"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
       }}
     >
-      {/* 🛑 DRAG HANDLE & HEADER */}
+      {/* Drag handle and header */}
       <div
         onMouseDown={handleMouseDown}
         className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10 cursor-grab active:cursor-grabbing select-none"
@@ -162,9 +163,9 @@ export default function CoordinatesPanel() {
         </button>
       </div>
 
-      {/* 🛠️ PANEL CONTENT */}
+      {/* Panel content */}
       <div className="p-4">
-        {/* 🎯 OBJECT */}
+        {/* Selected object */}
         {selected ? (
           <>
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Selected Object</p>
@@ -224,7 +225,7 @@ export default function CoordinatesPanel() {
           </div>
         )}
 
-        {/* 📷 CAMERA */}
+        {/* Camera */}
         <div className="mt-5 pt-4 border-t border-white/10">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Camera</p>
           <DisplayRow label="Position" value={camera.position} />
